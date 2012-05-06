@@ -1,0 +1,108 @@
+jolth@master:~/GMYS/Report-GPS$ python
+Python 2.6.6 (r266:84292, Dec 27 2010, 00:02:40) 
+[GCC 4.4.5] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from Devices.Antares.Location.convert import *
+>>> dir()
+['__builtins__', '__doc__', '__name__', '__package__', 'latWgs84ToDecimal', 'lonWgs84ToDecimal']
+>>> lat = '+0186616'
+>>> latWgs84ToDecimal(lat)
+'1.86616'
+>>> long = '-07603934'
+>>> longWgs84ToDecimal(long)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'longWgs84ToDecimal' is not defined
+>>> lonWgs84ToDecimal(long)
+'-76.03934'
+>>> 
+>>> 
+>>> from Location.geomapgoogle import *
+>>> dir()
+['GEOCODE_BASE_URL', '__builtins__', '__doc__', '__name__', '__package__', 'geocode', 'json', 'lat', 'latWgs84ToDecimal', 'lonWgs84ToDecimal', 'long', 'regeocode', 'urllib']
+>>> GEOCODE_BASE_URL
+'http://maps.google.com/maps/api/geocode/json'
+>>> latlng=(latWgs84ToDecimal(lat),lonWgs84ToDecimal(long))
+>>> latlng
+('1.86616', '-76.03934')
+>>> regeocode(latlng)
+'[]'
+>>> regeocode(latlng=latWgs84ToDecimal(lat),lonWgs84ToDecimal(long))
+  File "<stdin>", line 1
+SyntaxError: non-keyword arg after keyword arg
+>>> latlng
+('1.86616', '-76.03934')
+>>> latlng
+('1.86616', '-76.03934')
+>>> latlng.join()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'tuple' object has no attribute 'join'
+>>> latlng.join('')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'tuple' object has no attribute 'join'
+>>> ''.join(latlng)
+'1.86616-76.03934'
+>>> ' '.join(latlng)
+'1.86616 -76.03934'
+>>> ','.join(latlng)
+'1.86616,-76.03934'
+>>> regeocode(','.join(latlng))
+'["Calle 31 # 2 a 100, Pitalito, Huila, Colombia", "Pitalito, Huila, Colombia", "Huila, Colombia", "Colombia"]'
+>>> regeocode(','.join(latlng))
+'["Calle 31 # 2 a 100, Pitalito, Huila, Colombia", "Pitalito, Huila, Colombia", "Huila, Colombia", "Colombia"]'
+>>> regeocode(','.join(latlng))[1]
+'"'
+>>> regeocode(','.join(latlng))[2]
+'C'
+>>> regeocode(','.join(latlng)).split('')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: empty separator
+>>> regeocode(','.join(latlng)).split(' ')
+['["Calle', '31', '#', '2', 'a', '100,', 'Pitalito,', 'Huila,', 'Colombia",', '"Pitalito,', 'Huila,', 'Colombia",', '"Huila,', 'Colombia",', '"Colombia"]']
+>>> regeocode(','.join(latlng)).split(' ')[1]
+'31'
+>>> regeocode(','.join(latlng)).split(' ')[2]
+'#'
+>>> regeocode(','.join(latlng))
+'["Calle 31 # 2 a 100, Pitalito, Huila, Colombia", "Pitalito, Huila, Colombia", "Huila, Colombia", "Colombia"]'
+>>> type(regeocode(','.join(latlng)))
+<type 'str'>
+>>> list(regeocode(','.join(latlng)))
+['[', '"', 'C', 'a', 'l', 'l', 'e', ' ', '3', '1', ' ', '#', ' ', '2', ' ', 'a', ' ', '1', '0', '0', ',', ' ', 'P', 'i', 't', 'a', 'l', 'i', 't', 'o', ',', ' ', 'H', 'u', 'i', 'l', 'a', ',', ' ', 'C', 'o', 'l', 'o', 'm', 'b', 'i', 'a', '"', ',', ' ', '"', 'P', 'i', 't', 'a', 'l', 'i', 't', 'o', ',', ' ', 'H', 'u', 'i', 'l', 'a', ',', ' ', 'C', 'o', 'l', 'o', 'm', 'b', 'i', 'a', '"', ',', ' ', '"', 'H', 'u', 'i', 'l', 'a', ',', ' ', 'C', 'o', 'l', 'o', 'm', 'b', 'i', 'a', '"', ',', ' ', '"', 'C', 'o', 'l', 'o', 'm', 'b', 'i', 'a', '"', ']']
+>>> dir(regeocode(','.join(latlng)))
+['__add__', '__class__', '__contains__', '__delattr__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getnewargs__', '__getslice__', '__gt__', '__hash__', '__init__', '__le__', '__len__', '__lt__', '__mod__', '__mul__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__rmod__', '__rmul__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '_formatter_field_name_split', '_formatter_parser', 'capitalize', 'center', 'count', 'decode', 'encode', 'endswith', 'expandtabs', 'find', 'format', 'index', 'isalnum', 'isalpha', 'isdigit', 'islower', 'isspace', 'istitle', 'isupper', 'join', 'ljust', 'lower', 'lstrip', 'partition', 'replace', 'rfind', 'rindex', 'rjust', 'rpartition', 'rsplit', 'rstrip', 'split', 'splitlines', 'startswith', 'strip', 'swapcase', 'title', 'translate', 'upper', 'zfill']
+>>> import json
+>>> json.dumps(regeocode(','.join(latlng)))
+'"[\\"Calle 31 # 2 a 100, Pitalito, Huila, Colombia\\", \\"Pitalito, Huila, Colombia\\", \\"Huila, Colombia\\", \\"Colombia\\"]"'
+>>> json.dump(regeocode(','.join(latlng)))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: dump() takes at least 2 arguments (1 given)
+>>> json.loads(regeocode(','.join(latlng)))
+[u'Calle 31 # 2 a 100, Pitalito, Huila, Colombia', u'Pitalito, Huila, Colombia', u'Huila, Colombia', u'Colombia']
+>>> json.loads(regeocode(','.join(latlng)))[1]
+u'Pitalito, Huila, Colombia'
+>>> json.loads(regeocode(','.join(latlng)))[2]
+u'Huila, Colombia'
+>>> json.loads(regeocode(','.join(latlng)))[0]
+u'Calle 31 # 2 a 100, Pitalito, Huila, Colombia'
+>>> print json.loads(regeocode(','.join(latlng)))[0]
+Calle 31 # 2 a 100, Pitalito, Huila, Colombia
+>>> 
+>>> 
+>>> 
+>>> 
+>>> print json.loads(regeocode(','.join(latlng)))[0]
+Calle 31 # 2 a 100, Pitalito, Huila, Colombia
+>>> print json.loads(regeocode(','.join(latlng)))[1]
+Pitalito, Huila, Colombia
+>>> print json.loads(regeocode(','.join(latlng)))[2]
+Huila, Colombia
+>>> print json.loads(regeocode(','.join(latlng)))[3]
+Colombia
+>>> 
+>>> 
+
