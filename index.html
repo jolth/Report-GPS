@@ -1,42 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Report GPS</title>
-    <script>
-		var READY_STATE_UNINITIALIZED   = 0; 
-		var READY_STATE_LOADING         = 1; 
-		var READY_STATE_LOADED          = 2;
-		var READY_STATE_INTERACTIVE     = 3; 
-		var READY_STATE_COMPLETE        = 4;
+	<script type="text/javascript">
 
- 		var p_http;
 
- 		function show(){
+		var net = Object();
 
- 			p_http = new XMLHttpRequest();
+		net.READY_STATE_UNINITIALIZED=0;
+		net.READY_STATE_LOADING=1;
+		net.READY_STATE_LOADED=2;
+		net.READY_STATE_INTERACTIVE=3;
+		net.READY_STATE_COMPLETE=4;
+ 
 
- 			p_http.onreadystatechange = imp;
+		net.load = function(url, f, fError){
+			this.url = url;
+			this.request = null;
+			this.onloadXML(url);
+			this.onload = f;
+			this.onerror = (fError) ? fError: this.defaultError;
+		}
 
- 			setInterval( function () {
-               		    p_http.open('GET', '/gps.log', true);
- 			    p_http.send(null);
-            		}, 1000);
+		net.load.prototype = {
 
- 			function imp(){
- 				if(p_http.readyState == READY_STATE_COMPLETE){
- 					if(p_http.status == 200){
- 						document.getElementById('salida').innerHTML = p_http.responseText;
- 					}
- 				}
- 			}
+			onloadXML : function(url) {
+				if(window.XMLHttpRequest){
+					this.request = new XMLHttpRequest();
+				} else if (window.ActiveXObject){
+					this.request = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+			
 
- 		}
+				if(this.request){
+					try {
+						var inst = this;
+						this.request.onreadystatechange = function () {
+							inst.onReadyState.call(inst);
+						}
+						this.request.open('GET', this.url, true);
+						this.request.send(null);
+					} catch (e) {
+						this.defaultError.call(this);
+					}
+				}
+			},
 
- 		window.onload = show;  
-    </script>
+			onReadyState : function(){
+				if(this.request.readyState == net.READY_STATE_COMPLETE){
+					if(this.request.status == 200){
+						this.onload.call(this);
+					} else {
+						this.defaultError.call(this);
+					}
+				}
+			},
+
+			defaultError : function(){
+				alert("Error al obtener los datos" 
+					+ "\n readyState: " + this.request.readyState
+					+ "\nStatus: " + this.request.status );
+ 					//"\nError: " + error || '');
+			}
+
+		}
+
+		
+		// Loading: 
+
+		function showContent(){
+			document.getElementById('show').innerHTML = this.request.responseText;
+		}
+
+		function show(){
+			var loader = new net.load('/gps.log', showContent);
+		}
+
+		window.onload = show;
+	</script>
 </head>
 <body>
-    <pre id="salida">
-    </pre>
+	<pre id="show"></pre>
 </body>
 </html>
