@@ -19,7 +19,7 @@
 
  			setInterval( function () {
                		    p_http.open('GET', '/gps.log', true);
- 			    p_http.send(null);
+ 			            p_http.send(null);
             		}, 1000);
 
  			function imp(){

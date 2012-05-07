@@ -37,8 +37,11 @@
 						this.request.onreadystatechange = function () {
 							inst.onReadyState.call(inst);
 						}
-						this.request.open('GET', this.url, true);
-						this.request.send(null);
+						window.setInterval ( function () {
+							//salert(this);
+							inst.request.open('GET', inst.url, true);
+							inst.request.send(null);
+						}, 1000);
 					} catch (e) {
 						this.defaultError.call(this);
 					}
